@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "824663432064",
+    "project_id": "linklado",
+    "storage_bucket": "linklado.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:824663432064:android:cccbb50cb88079caa47f65",
+        "android_client_info": {
+          "package_name": "com.linklado.tuklado.tuklado_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "824663432064-sfnlqjcdqb2ih8g7v785c2dsufd7o5fe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlOYR8OfMfaGMQao-E1sv8tmxyfQs8Vh8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "824663432064-sfnlqjcdqb2ih8g7v785c2dsufd7o5fe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
