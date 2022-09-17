@@ -13,6 +13,7 @@ import 'package:win32/win32.dart';
 import 'package:window_manager/window_manager.dart';
 
 var prefs;
+var platform;
 
 void main() async {
 
@@ -38,6 +39,16 @@ void main() async {
     prefs = await SharedPreferences.getInstance();
   }
 
+  if (Platform.isAndroid) {
+    platform = const LinkladoAndroid();
+  } else if (Platform.isWindows) {
+    platform = const LinkladoWindows();
+  } else if (Platform.isIOS) {
+    platform = const LinkladoIOS();
+  } else {
+    platform = const LinkladoAndroid();
+  }
+
   runApp(const MyApp());
 }
 
@@ -51,7 +62,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Platform.isAndroid ? const LinkladoAndroid() : const LinkladoWindows(),
+      home: platform,
     );
   }
 }
@@ -537,6 +548,64 @@ class _LinkladoAndroidState extends State<LinkladoAndroid> {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class LinkladoIOS extends StatefulWidget {
+  const LinkladoIOS({Key? key}) : super(key: key);
+
+  @override
+  State<LinkladoIOS> createState() => _LinkladoIOSState();
+}
+class _LinkladoIOSState extends State<LinkladoIOS> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: roxoLinklado,
+      appBar: AppBar(
+        backgroundColor: roxoLinklado,
+        title: const Text('Linklado'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              height: 150,
+              width: 150,
+              decoration: const BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    spreadRadius: 0,
+                  )
+                ],
+                image: DecorationImage(
+                    image: AssetImage(
+                      'assets/logo_linklado.png',
+                    ),
+                    fit: BoxFit.fill
+                ),
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(height: 30),
+            const Text(
+              "Parabéns, você instalou o Linklado! \n Basta adicioná-lo como teclado nas configurações!",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
