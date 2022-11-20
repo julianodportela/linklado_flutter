@@ -57,4 +57,40 @@ class Linklado: KeyboardViewController {
             return
         }
     }
+    
+    override func createBanner() -> ExtraView? {
+        return LinkladoBanner(globalColors: type(of: self).globalColors, darkMode: false, solidColorMode: self.solidColorMode())
+    }
+    
+    class LinkladoBanner: ExtraView {
+        
+        var linkladoLabel: UILabel = UILabel()
+        
+        required init(globalColors: GlobalColors.Type?, darkMode: Bool, solidColorMode: Bool) {
+            super.init(globalColors: globalColors, darkMode: darkMode, solidColorMode: solidColorMode)
+            
+            self.addSubview(self.linkladoLabel)
+            
+            self.linkladoLabel.frame.origin = CGPoint(x: self.linkladoLabel.frame.origin.x, y: self.linkladoLabel.frame.origin.y - 15)
+            
+            self.linkladoLabel.text = "Linklado!"
+            
+            self.linkladoLabel.sizeToFit()
+        }
+
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+        override func setNeedsLayout() {
+            super.setNeedsLayout()
+        }
+        
+        override func layoutSubviews() {
+            super.layoutSubviews()
+
+            self.linkladoLabel.center = self.center
+        }
+    }
+    
 }
