@@ -29,7 +29,7 @@
 		E48E7DDC29242A0600FD3DB5 /* ExtraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E48E7DCA29242A0500FD3DB5 /* ExtraView.swift */; };
 		E48E7DDD29242A0600FD3DB5 /* KeyboardKeyBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = E48E7DCB29242A0500FD3DB5 /* KeyboardKeyBackground.swift */; };
 		E48E7DE029242A0600FD3DB5 /* DefaultKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E48E7DCE29242A0600FD3DB5 /* DefaultKeyboard.swift */; };
-		E48E7DE429242E3B00FD3DB5 /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E48E7DE329242E3B00FD3DB5 /* KeyboardViewController.swift */; };
+		E4AED8472929A5AA00BEB55F /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4AED8462929A5A900BEB55F /* KeyboardViewController.swift */; };
 		E4FAE55429271BA300D001A2 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E4FAE55329271BA300D001A2 /* Settings.bundle */; };
 /* End PBXBuildFile section */
 
@@ -99,7 +99,7 @@
 		E48E7DCA29242A0500FD3DB5 /* ExtraView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtraView.swift; sourceTree = "<group>"; };
 		E48E7DCB29242A0500FD3DB5 /* KeyboardKeyBackground.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardKeyBackground.swift; sourceTree = "<group>"; };
 		E48E7DCE29242A0600FD3DB5 /* DefaultKeyboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultKeyboard.swift; sourceTree = "<group>"; };
-		E48E7DE329242E3B00FD3DB5 /* KeyboardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KeyboardViewController.swift; path = ../../../../Desktop/KeyboardViewController.swift; sourceTree = "<group>"; };
+		E4AED8462929A5A900BEB55F /* KeyboardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
 		E4FAE55329271BA300D001A2 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = SOURCE_ROOT; };
 		E5EF648C1061870498A37F7E /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		F9AE9012C996626650E67C2B /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -185,7 +185,7 @@
 		E48E7DB22924284800FD3DB5 /* Linklado */ = {
 			isa = PBXGroup;
 			children = (
-				E48E7DE329242E3B00FD3DB5 /* KeyboardViewController.swift */,
+				E4AED8462929A5A900BEB55F /* KeyboardViewController.swift */,
 				E48E7DC629242A0400FD3DB5 /* Linklado.swift */,
 				E48E7DCE29242A0600FD3DB5 /* DefaultKeyboard.swift */,
 				E48E7DBE29242A0200FD3DB5 /* DirectionEnum.swift */,
@@ -408,13 +408,13 @@
 				E48E7DCF29242A0600FD3DB5 /* KeyboardKey.swift in Sources */,
 				E48E7DDA29242A0600FD3DB5 /* Utilities.swift in Sources */,
 				E48E7DD629242A0600FD3DB5 /* KeyboardConnector.swift in Sources */,
+				E4AED8472929A5AA00BEB55F /* KeyboardViewController.swift in Sources */,
 				E48E7DDC29242A0600FD3DB5 /* ExtraView.swift in Sources */,
 				E48E7DD429242A0600FD3DB5 /* KeyboardLayout.swift in Sources */,
 				E48E7DD729242A0600FD3DB5 /* Shapes.swift in Sources */,
 				E48E7DE029242A0600FD3DB5 /* DefaultKeyboard.swift in Sources */,
 				E48E7DD829242A0600FD3DB5 /* Linklado.swift in Sources */,
 				E48E7DD029242A0600FD3DB5 /* DirectionEnum.swift in Sources */,
-				E48E7DE429242E3B00FD3DB5 /* KeyboardViewController.swift in Sources */,
 				E48E7DD329242A0600FD3DB5 /* ForwardingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
