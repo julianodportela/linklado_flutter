@@ -56,7 +56,13 @@
         <Key android:keyWidth="9.1%" android:keyLabel="k" android:codes="107"/>
         <Key android:keyWidth="9.1%" android:keyLabel="l" android:codes="108"/>
         <Key android:keyWidth="9.1%" android:keyLabel="'" android:codes="39"/>
-        <Key android:keyWidth="9.1%" android:keyLabel="\u0303" android:keyEdgeFlags="right" android:isRepeatable="false" android:popupCharacters="\u0302\u0301\u0300\u0308\u307" android:popupKeyboard="@xml/popup_symbols"/>
+        <Key
+            android:keyWidth="9.1%"
+            android:keyLabel="\u0303"
+            android:keyEdgeFlags="right"
+            android:isRepeatable="false"
+            android:popupCharacters="\u0302\u0301\u0300\u0308\u0304\u0307\u307"
+            android:popupKeyboard="@xml/popup_symbols"/>
     </Row>
 
     <Row>

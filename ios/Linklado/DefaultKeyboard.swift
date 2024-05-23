@@ -36,7 +36,7 @@ func defaultKeyboard() -> Keyboard {
     let keyModel = Key(.shift)
     defaultKeyboard.add(key: keyModel, row: 3, page: 0)
     
-    for key in ["̃","̂","́","̀","̈","̇","Ç"] {
+    for key in ["̃", "̂", "́", "̀", "̈", "̇", "̄", "Ç"] {
         let keyModel = Key(.character)
         keyModel.setLetter(key)
         keyModel.lowercaseKeyCap = key.lowercased()
