@@ -24,7 +24,7 @@
 
 
        <service
-           android:name="Tuklado"
+           android:name=".Linklado"
            android:exported="false"
            android:label="Linklado"
            android:permission="android.permission.BIND_INPUT_METHOD">

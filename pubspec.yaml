@@ -3,15 +3,16 @@ description: Linklado em Flutter
 version: 1.1.0+3
 
 environment:
-  sdk: ">=2.17.3 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
+  ffi: ^2.1.0
   win32: ^2.7.0
   window_manager: ^0.2.5
-  shared_preferences: ^2.0.15
+  shared_preferences: ^2.2.0
 
 dev_dependencies:
   flutter_test:

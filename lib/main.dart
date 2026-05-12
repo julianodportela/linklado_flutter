@@ -1,17 +1,13 @@
 import 'dart:async';
 import 'dart:ffi';
+import 'package:Linklado/linklado_android.dart';
 import 'package:Linklado/styles.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:ffi/ffi.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:win32/win32.dart';
 import 'package:window_manager/window_manager.dart';
-
-var prefs;
-var platform;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +15,7 @@ void main() async {
   if (Platform.isWindows) {
     await windowManager.ensureInitialized();
 
-    WindowOptions windowOptions = const WindowOptions(
+    const WindowOptions windowOptions = WindowOptions(
       size: ui.Size(400, 250),
       center: true,
       backgroundColor: roxoLinklado,
@@ -31,41 +27,40 @@ void main() async {
       await windowManager.show();
       await windowManager.focus();
     });
-  } else {
-    prefs = await SharedPreferences.getInstance();
-  }
-
-  if (Platform.isAndroid) {
-    platform = const LinkladoAndroid();
-  } else if (Platform.isWindows) {
-    platform = const LinkladoWindows();
-  } else if (Platform.isIOS) {
-    platform = const LinkladoIOS();
-  } else {
-    platform = const LinkladoAndroid();
   }
 
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Widget home;
+    if (Platform.isAndroid) {
+      home = const LinkladoAndroid();
+    } else if (Platform.isWindows) {
+      home = const LinkladoWindows();
+    } else if (Platform.isIOS) {
+      home = const LinkladoIOS();
+    } else {
+      home = const LinkladoAndroid();
+    }
+
     return MaterialApp(
       title: 'Linklado',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: platform,
+      theme: ThemeData(primarySwatch: Colors.deepPurple),
+      home: home,
     );
   }
 }
 
+// ── Windows ───────────────────────────────────────────────────────────────────
+
 class LinkladoWindows extends StatefulWidget {
-  const LinkladoWindows({Key? key}) : super(key: key);
+  const LinkladoWindows({super.key});
 
   @override
   State<LinkladoWindows> createState() => _LinkladoWindowsState();
@@ -96,12 +91,10 @@ class _LinkladoWindowsState extends State<LinkladoWindows> with WindowListener {
     return GestureDetector(
       onTap: () {
         final inputs = calloc<INPUT>();
-
         inputs.ref.type = INPUT_KEYBOARD;
         inputs.ref.ki.wVk = 0;
         inputs.ref.ki.wScan = unicode!;
         inputs.ref.ki.dwFlags = KEYEVENTF_UNICODE;
-
         SetForegroundWindow(hwnd);
         SendInput(1, inputs, sizeOf<INPUT>());
       },
@@ -132,7 +125,7 @@ class _LinkladoWindowsState extends State<LinkladoWindows> with WindowListener {
       backgroundColor: roxoLinklado,
       appBar: AppBar(
         backgroundColor: roxoLinklado,
-        title: const Text('Linklado', style: TextStyle(color: Colors.white),),
+        title: const Text('Linklado', style: TextStyle(color: Colors.white)),
       ),
       body: Center(
         child: GridView.count(
@@ -166,271 +159,10 @@ class _LinkladoWindowsState extends State<LinkladoWindows> with WindowListener {
   }
 }
 
-class LinkladoAndroid extends StatefulWidget {
-  const LinkladoAndroid({Key? key}) : super(key: key);
-
-  @override
-  State<LinkladoAndroid> createState() => _LinkladoAndroidState();
-}
-
-class _LinkladoAndroidState extends State<LinkladoAndroid> {
-  int index = 0;
-
-  static const platform = MethodChannel('com.linklado.tuklado.tuklado_flutter/channelTuklado');
-
-  void ativarLinklado() async {
-    await platform.invokeMethod('startSettingsPageLinklado');
-  }
-
-  void metodoEntradaLinklado() async {
-    await platform.invokeMethod('startInputMethodPageLinklado');
-  }
-
-  void checkNewUser() async {
-    // Assuming prefs is defined elsewhere in your code
-    index = prefs.getInt("index") ?? 0;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    checkNewUser();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: roxoLinklado,
-      appBar: AppBar(
-        backgroundColor: roxoLinklado,
-        title: const Text('Linklado', style: TextStyle(color: Colors.white),),
-      ),
-      body: IndexedStack(
-        index: index,
-        children: [
-          buildWelcomeScreen(),
-          buildActivationScreen(),
-          buildInputMethodScreen(),
-          buildFinalScreen(),
-        ],
-      ),
-    );
-  }
-
-  Widget buildWelcomeScreen() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        buildLogo(),
-        const SizedBox(height: 30),
-        const Text(
-          "Seja bem-vindo ao Linklado!\nPara começar a utilizar o teclado, ative nas configurações.",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 30),
-        buildButton('Ativar o Linklado', ativarLinklado),
-        const SizedBox(height: 20),
-        buildNextButton(),
-      ],
-    );
-  }
-
-  Widget buildActivationScreen() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        buildLogo(),
-        const SizedBox(height: 30),
-        const Text(
-          "Agora, para utilizá-lo, ative-o como método de entrada.",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 30),
-        buildButton('Usar o Linklado como método de entrada', metodoEntradaLinklado),
-        const SizedBox(height: 20),
-        buildNavigationButtons(),
-      ],
-    );
-  }
-
-  Widget buildInputMethodScreen() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        buildLogo(),
-        const SizedBox(height: 30),
-        const Text(
-          "Se você precisar parar de usar o Linklado, \nquando você clicar em algum lugar que "
-              "precisa digitar um texto, o seguinte ícone irá aparecer no canto inferior direito da sua tela:",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 15,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 15),
-        const Center(
-          child: Icon(
-            Icons.keyboard_alt_outlined, size: 50,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(height: 15),
-        const Text(
-          "Tudo o que você precisa fazer é apertar nele e selecionar seu teclado normal!",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 15,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 20),
-        buildNavigationButtons(),
-      ],
-    );
-  }
-
-  Widget buildFinalScreen() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        buildLogo(),
-        const SizedBox(height: 30),
-        const Text(
-          "Parabéns! O teclado Linklado está pronto para uso!",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 30),
-        const Text(
-          "Para acessar caracteres especiais como ~, ', \\, -, entre outros pressione e segure a tecla correspondente.",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 15,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 20),
-        buildNavigationButtons(),
-      ],
-    );
-  }
-
-  Widget buildLogo() {
-    return Container(
-      height: 150,
-      width: 150,
-      decoration: const BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 10,
-            spreadRadius: 0,
-          )
-        ],
-        image: DecorationImage(
-          image: AssetImage('assets/logo_linklado.png'),
-          fit: BoxFit.fill,
-        ),
-        shape: BoxShape.circle,
-      ),
-    );
-  }
-
-  Widget buildButton(String text, Function onTap) {
-    return ElevatedButton(
-      onPressed: () => onTap(),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: verdeLinklado,
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-        textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
-      child: Text(text),
-    );
-  }
-
-  Widget buildNextButton() {
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          index = 1;
-          prefs.setInt("index", 1);
-        });
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: verdeLinklado,
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-        textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
-      child: const Text('Próximo'),
-    );
-  }
-
-  Widget buildNavigationButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              if (index > 0) {
-                index--;
-                prefs.setInt("index", index);
-              }
-            });
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: verdeLinklado,
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-            textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          child: const Text('<'),
-        ),
-        const SizedBox(width: 20),
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              if (index < 3) {
-                index++;
-                prefs.setInt("index", index);
-              }
-            });
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: verdeLinklado,
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-            textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          child: const Text('>'),
-        ),
-      ],
-    );
-  }
-}
+// ── iOS ───────────────────────────────────────────────────────────────────────
 
 class LinkladoIOS extends StatefulWidget {
-  const LinkladoIOS({Key? key}) : super(key: key);
+  const LinkladoIOS({super.key});
 
   @override
   State<LinkladoIOS> createState() => _LinkladoIOSState();
@@ -445,10 +177,7 @@ class _LinkladoIOSState extends State<LinkladoIOS> {
       backgroundColor: roxoLinklado,
       appBar: AppBar(
         backgroundColor: roxoLinklado,
-        title: const Text(
-          'Linklado',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: const Text('Linklado', style: TextStyle(color: Colors.white)),
         centerTitle: true,
       ),
       body: IndexedStack(
@@ -472,11 +201,7 @@ class _LinkladoIOSState extends State<LinkladoIOS> {
         const Text(
           "Seja bem-vindo ao Linklado!\nPara começar a utilizar o teclado, siga as instruções.",
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 30),
         buildNextButton(),
@@ -495,11 +220,7 @@ class _LinkladoIOSState extends State<LinkladoIOS> {
             child: Text(
               'Instruções para iOS',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 24,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(height: 20),
@@ -527,21 +248,13 @@ class _LinkladoIOSState extends State<LinkladoIOS> {
         const Text(
           "Parabéns! O teclado Linklado está pronto para uso!",
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 20),
         const Text(
           "Para acessar caracteres especiais como ~, ', \\, -, pressione e segure a tecla correspondente.",
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 15,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 15, color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ],
     );
@@ -552,13 +265,7 @@ class _LinkladoIOSState extends State<LinkladoIOS> {
       height: 150,
       width: 150,
       decoration: const BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 10,
-            spreadRadius: 0,
-          )
-        ],
+        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10)],
         image: DecorationImage(
           image: AssetImage('assets/logo_linklado.png'),
           fit: BoxFit.fill,
@@ -571,11 +278,7 @@ class _LinkladoIOSState extends State<LinkladoIOS> {
   Widget buildNextButton() {
     return Center(
       child: ElevatedButton(
-        onPressed: () {
-          setState(() {
-            index++;
-          });
-        },
+        onPressed: () => setState(() => index++),
         style: ElevatedButton.styleFrom(
           backgroundColor: verdeLinklado,
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
@@ -591,10 +294,7 @@ class _LinkladoIOSState extends State<LinkladoIOS> {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Text(
         text,
-        style: const TextStyle(
-          fontSize: 16,
-          color: Colors.white,
-        ),
+        style: const TextStyle(fontSize: 16, color: Colors.white),
       ),
     );
   }
