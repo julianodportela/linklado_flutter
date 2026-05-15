@@ -50,10 +50,12 @@ jobs:
 
       - run: flutter pub get
 
+      - name: Definir build number
+        run: echo "BUILD_NUMBER=$(( ${{ github.run_number }} + 1000 ))" >> $GITHUB_ENV
+
       - name: Deploy to Play Store
         env:
           DEPLOY_ENV: ${{ inputs.environment }}
-          BUILD_NUMBER: ${{ github.run_number + 1000 }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -79,6 +81,9 @@ jobs:
 
       - run: flutter pub get
 
+      - name: Definir build number
+        run: echo "BUILD_NUMBER=$(( ${{ github.run_number }} + 1000 ))" >> $GITHUB_ENV
+
       - run: cd ios && pod install --repo-update
 
       - name: Set up signing keychain
@@ -99,7 +104,6 @@ jobs:
       - name: Deploy to App Store / TestFlight
         env:
           DEPLOY_ENV: ${{ inputs.environment }}
-          BUILD_NUMBER: ${{ github.run_number + 1000 }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
