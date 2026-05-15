@@ -1,0 +1,62 @@
+platform :android do
+  lane :deploy do
+    # Write signing config dynamically so the keystore path works in CI
+    File.write("android/key.properties", [
+      "storePassword=#{ENV.fetch("KEYSTORE_PASSWORD")}",
+      "keyPassword=#{ENV.fetch("KEY_PASSWORD")}",
+      "keyAlias=#{ENV.fetch("KEY_ALIAS")}",
+      "storeFile=#{ENV.fetch("KEYSTORE_PATH")}",
+    ].join("\n"))
+
+    sh("flutter", "build", "appbundle", "--release", chdir: "..")
+
+    upload_to_play_store(
+      track: "internal",
+      aab: "build/app/outputs/bundle/release/app-release.aab",
+      json_key_data: ENV.fetch("PLAY_STORE_JSON_KEY"),
+      package_name: "com.linklado.tuklado.tuklado_flutter",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+  end
+end
+
+platform :ios do
+  lane :deploy do
+    api_key = app_store_connect_api_key(
+      key_id: "4WR9XHCU43",
+      issuer_id: "f7a19456-7a78-4c83-a050-8f8957b75fbb",
+      key_content: ENV.fetch("ASC_KEY_CONTENT"),
+      is_key_content_base64: true,
+    )
+
+    match(
+      type: "appstore",
+      app_identifier: ["com.linklado.linklado", "com.linklado.linklado.Linklado"],
+      api_key: api_key,
+      readonly: true,
+      git_url: "https://github.com/julianodportela/certificates",
+      git_branch: "main",
+      team_id: "3W93D6R57D",
+    )
+
+    build_app(
+      workspace: "ios/Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store",
+      configuration: "Release",
+      output_directory: "build/ios/ipa",
+      output_name: "Linklado.ipa",
+    )
+
+    upload_to_app_store(
+      api_key: api_key,
+      skip_metadata: true,
+      skip_screenshots: true,
+      submit_for_review: false,
+      precheck_include_in_app_purchases: false,
+      force: true,
+    )
+  end
+end

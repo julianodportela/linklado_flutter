@@ -1,0 +1,6 @@
+app_identifier("com.linklado.linklado")
+apple_id("julianodportela@gmail.com")
+
+for_platform(:android) do
+  package_name("com.linklado.tuklado.tuklado_flutter")
+end
