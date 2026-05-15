@@ -1,19 +1,20 @@
 platform :android do
   lane :deploy do
     testing = ENV.fetch("DEPLOY_ENV", "testing") == "testing"
+    root = File.expand_path("..", __dir__)
 
-    File.write("android/key.properties", [
+    File.write(File.join(root, "android/key.properties"), [
       "storePassword=#{ENV.fetch("KEYSTORE_PASSWORD")}",
       "keyPassword=#{ENV.fetch("KEY_PASSWORD")}",
       "keyAlias=#{ENV.fetch("KEY_ALIAS")}",
       "storeFile=#{ENV.fetch("KEYSTORE_PATH")}",
     ].join("\n"))
 
-    sh("flutter", "build", "appbundle", "--release", chdir: "..")
+    sh("flutter", "build", "appbundle", "--release", chdir: root)
 
     upload_to_play_store(
       track: testing ? "internal" : "production",
-      aab: "build/app/outputs/bundle/release/app-release.aab",
+      aab: File.join(root, "build/app/outputs/bundle/release/app-release.aab"),
       json_key_data: ENV.fetch("PLAY_STORE_JSON_KEY"),
       package_name: "com.linklado.tuklado.tuklado_flutter",
       skip_upload_metadata: true,
