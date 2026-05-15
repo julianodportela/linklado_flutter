@@ -45,6 +45,15 @@ platform :ios do
       team_id: "3W93D6R57D",
     )
 
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "ios/Runner.xcodeproj",
+      team_id: "3W93D6R57D",
+      targets: "Runner",
+      profile_name: "match AppStore com.linklado.linklado",
+      bundle_identifier: "com.linklado.linklado",
+    )
+
     build_app(
       workspace: "ios/Runner.xcworkspace",
       scheme: "Runner",
@@ -52,6 +61,12 @@ platform :ios do
       configuration: "Release",
       output_directory: "build/ios/ipa",
       output_name: "Linklado.ipa",
+      export_options: {
+        provisioningProfiles: {
+          "com.linklado.linklado" => "match AppStore com.linklado.linklado",
+          "com.linklado.linklado.Linklado" => "match AppStore com.linklado.linklado.Linklado",
+        }
+      }
     )
 
     if testing
