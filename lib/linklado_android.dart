@@ -7,6 +7,7 @@ const _channel =
 
 const _purple = Color(0xFFb30ce3);
 const _green = Color(0xFFa4e036);
+const _keyPurple = Color(0xFF7c3aed);
 
 class LinkladoAndroid extends StatefulWidget {
   const LinkladoAndroid({super.key});
@@ -460,7 +461,7 @@ class _ReadyScreen extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           const Text(
-            'O Linklado está instalado e ativo.',
+            'O Linklado está instalado e pronto para usar.',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 16, color: Colors.white70, height: 1.5),
           ),
@@ -513,7 +514,7 @@ class _ReadyScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF7c3aed),
+                          color: _keyPurple,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(c,
@@ -527,28 +528,28 @@ class _ReadyScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          _TutorialCard(
+          const _TutorialCard(
             icon: Icons.touch_app,
             title: 'Como acessar ainda mais variantes',
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const _InstructionCard(
+                _InstructionCard(
                   step: '1',
                   text: 'Pressione e segure qualquer tecla (roxa ou normal) por um momento.',
                 ),
-                const SizedBox(height: 8),
-                const _InstructionCard(
+                SizedBox(height: 8),
+                _InstructionCard(
                   step: '2',
                   text: 'Um menu aparece acima com todas as variantes disponíveis.',
                 ),
-                const SizedBox(height: 8),
-                const _InstructionCard(
+                SizedBox(height: 8),
+                _InstructionCard(
                   step: '3',
                   text: 'Arraste o dedo até o caractere que deseja e solte. Pronto!',
                 ),
-                const SizedBox(height: 10),
-                const _Tip(
+                SizedBox(height: 10),
+                _Tip(
                   icon: Icons.text_fields,
                   text:
                       'As teclas de acento (~ ´ ` ^ ¨ ¯ ˙ ˇ) são combinadas: toque primeiro o caractere e depois o acento desejado (ex: a + ~ = ã, e + ´ = é).',
@@ -557,52 +558,30 @@ class _ReadyScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          _TutorialCard(
+          const _TutorialCard(
             icon: Icons.swap_horiz_rounded,
             title: 'Como trocar de teclado',
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Para voltar ao teclado normal ou escolher outro teclado:',
+                Text(
+                  'Para voltar ao teclado padrão ou escolher outro:',
                   style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
                 ),
-                const SizedBox(height: 10),
-                const _InstructionCard(
+                SizedBox(height: 10),
+                _InstructionCard(
                   step: '1',
-                  text:
-                      'Enquanto o teclado estiver aberto, procure o ícone de teclado na barra de navegação inferior da tela.',
+                  text: 'Enquanto o teclado estiver aberto, toque no ícone de teclado na barra de navegação.',
                 ),
-                const SizedBox(height: 8),
-                const _InstructionCard(
+                SizedBox(height: 8),
+                _InstructionCard(
                   step: '2',
-                  text: 'Toque nesse ícone para abrir a lista de teclados disponíveis.',
+                  text: 'Escolha o teclado desejado na lista.',
                 ),
-                const SizedBox(height: 8),
-                const _InstructionCard(
-                  step: '3',
-                  text: 'Escolha o teclado que deseja usar.',
-                ),
-                const SizedBox(height: 10),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white10,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.info_outline, color: Colors.white54, size: 16),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'Em alguns celulares o ícone aparece como um globo ou fica na barra de atalhos dentro do teclado.',
-                          style: TextStyle(
-                              color: Colors.white54, fontSize: 13, height: 1.4),
-                        ),
-                      ),
-                    ],
-                  ),
+                SizedBox(height: 10),
+                _Tip(
+                  icon: Icons.info_outline,
+                  text: 'Em alguns celulares o ícone aparece como um globo ou fica na barra de atalhos do teclado.',
                 ),
               ],
             ),
