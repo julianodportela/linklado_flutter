@@ -1,10 +1,13 @@
 name: Deploy
 
 on:
+  push:
+    branches:
+      - ci-test
   workflow_dispatch:
     inputs:
       platform:
-        description: 'Platform to deploy'
+        description: 'Plataforma'
         required: true
         default: 'both'
         type: choice
@@ -13,7 +16,7 @@ on:
           - ios
           - both
       environment:
-        description: 'Target (testing = TestFlight / internal track, production = App Store / production track)'
+        description: 'Destino (testing = TestFlight / internal track, production = App Store / production track)'
         required: true
         default: 'testing'
         type: choice
@@ -21,10 +24,13 @@ on:
           - testing
           - production
 
+permissions:
+  contents: write
+
 jobs:
   android:
     name: Deploy Android
-    if: ${{ inputs.platform == 'android' || inputs.platform == 'both' }}
+    if: ${{ github.event_name == 'push' || inputs.platform == 'android' || inputs.platform == 'both' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -43,7 +49,7 @@ jobs:
           ruby-version: '3.3'
           bundler-cache: true
 
-      - name: Decode keystore
+      - name: Decodificar keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > $GITHUB_WORKSPACE/upload-keystore.jks
           echo "KEYSTORE_PATH=$GITHUB_WORKSPACE/upload-keystore.jks" >> $GITHUB_ENV
@@ -53,9 +59,9 @@ jobs:
       - name: Definir build number
         run: echo "BUILD_NUMBER=$(( ${{ github.run_number }} + 1000 ))" >> $GITHUB_ENV
 
-      - name: Deploy to Play Store
+      - name: Deploy para o Play Store
         env:
-          DEPLOY_ENV: ${{ inputs.environment }}
+          DEPLOY_ENV: ${{ github.event_name == 'push' && 'testing' || inputs.environment }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -64,7 +70,7 @@ jobs:
 
   ios:
     name: Deploy iOS
-    if: ${{ inputs.platform == 'ios' || inputs.platform == 'both' }}
+    if: ${{ github.event_name == 'push' || inputs.platform == 'ios' || inputs.platform == 'both' }}
     runs-on: macos-latest
     timeout-minutes: 60
     steps:
@@ -90,11 +96,7 @@ jobs:
 
       - run: cd ios && pod install --repo-update
 
-      - name: Set up signing keychain
-        env:
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-          ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
+      - name: Configurar keychain para assinatura
         run: |
           KEYCHAIN_NAME="build.keychain"
           KEYCHAIN_PASSWORD="temporary"
@@ -105,14 +107,34 @@ jobs:
           echo "MATCH_KEYCHAIN_NAME=$KEYCHAIN_NAME" >> $GITHUB_ENV
           echo "MATCH_KEYCHAIN_PASSWORD=$KEYCHAIN_PASSWORD" >> $GITHUB_ENV
 
-      - name: Deploy to App Store / TestFlight
+      - name: Deploy para App Store / TestFlight
         env:
-          DEPLOY_ENV: ${{ inputs.environment }}
+          DEPLOY_ENV: ${{ github.event_name == 'push' && 'testing' || inputs.environment }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
         run: bundle exec fastlane ios deploy
 
-      - name: Clean up keychain
+      - name: Limpar keychain
         if: always()
         run: security delete-keychain "build.keychain" 2>/dev/null || true
+
+  promote:
+    name: Promover ci-test para master
+    needs: [android, ios]
+    if: ${{ github.event_name == 'push' && success() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Merge ci-test → master
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin master
+          git checkout master
+          git merge origin/ci-test --no-ff -m "Promover ci-test para master após deploy bem-sucedido"
+          git push origin master
