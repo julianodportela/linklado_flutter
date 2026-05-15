@@ -10,7 +10,8 @@ platform :android do
       "storeFile=#{ENV.fetch("KEYSTORE_PATH")}",
     ].join("\n"))
 
-    sh("flutter", "build", "appbundle", "--release", chdir: root)
+    build_number = ENV.fetch("BUILD_NUMBER", "1")
+    sh("flutter", "build", "appbundle", "--release", "--build-number=#{build_number}", chdir: root)
 
     upload_to_play_store(
       track: testing ? "internal" : "production",
@@ -49,6 +50,12 @@ platform :ios do
 
     root = File.expand_path("..", __dir__)
     xcodeproj = File.join(root, "ios/Runner.xcodeproj")
+    build_number = ENV.fetch("BUILD_NUMBER", "1")
+
+    increment_build_number(
+      build_number: build_number,
+      xcodeproj: xcodeproj,
+    )
 
     {
       "Runner"   => ["com.linklado.linklado",          "match AppStore com.linklado.linklado"],

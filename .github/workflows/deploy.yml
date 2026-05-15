@@ -53,6 +53,7 @@ jobs:
       - name: Deploy to Play Store
         env:
           DEPLOY_ENV: ${{ inputs.environment }}
+          BUILD_NUMBER: ${{ github.run_number }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -98,6 +99,7 @@ jobs:
       - name: Deploy to App Store / TestFlight
         env:
           DEPLOY_ENV: ${{ inputs.environment }}
+          BUILD_NUMBER: ${{ github.run_number }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
