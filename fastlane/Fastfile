@@ -1,6 +1,7 @@
 platform :android do
   lane :deploy do
-    # Write signing config dynamically so the keystore path works in CI
+    testing = ENV.fetch("DEPLOY_ENV", "testing") == "testing"
+
     File.write("android/key.properties", [
       "storePassword=#{ENV.fetch("KEYSTORE_PASSWORD")}",
       "keyPassword=#{ENV.fetch("KEY_PASSWORD")}",
@@ -11,7 +12,7 @@ platform :android do
     sh("flutter", "build", "appbundle", "--release", chdir: "..")
 
     upload_to_play_store(
-      track: "internal",
+      track: testing ? "internal" : "production",
       aab: "build/app/outputs/bundle/release/app-release.aab",
       json_key_data: ENV.fetch("PLAY_STORE_JSON_KEY"),
       package_name: "com.linklado.tuklado.tuklado_flutter",
@@ -24,6 +25,8 @@ end
 
 platform :ios do
   lane :deploy do
+    testing = ENV.fetch("DEPLOY_ENV", "testing") == "testing"
+
     api_key = app_store_connect_api_key(
       key_id: "4WR9XHCU43",
       issuer_id: "f7a19456-7a78-4c83-a050-8f8957b75fbb",
@@ -50,13 +53,20 @@ platform :ios do
       output_name: "Linklado.ipa",
     )
 
-    upload_to_app_store(
-      api_key: api_key,
-      skip_metadata: true,
-      skip_screenshots: true,
-      submit_for_review: false,
-      precheck_include_in_app_purchases: false,
-      force: true,
-    )
+    if testing
+      upload_to_testflight(
+        api_key: api_key,
+        skip_waiting_for_build_processing: true,
+      )
+    else
+      upload_to_app_store(
+        api_key: api_key,
+        skip_metadata: true,
+        skip_screenshots: true,
+        submit_for_review: false,
+        precheck_include_in_app_purchases: false,
+        force: true,
+      )
+    end
   end
 end

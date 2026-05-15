@@ -12,6 +12,14 @@ on:
           - android
           - ios
           - both
+      environment:
+        description: 'Target (testing = TestFlight / internal track, production = App Store / production track)'
+        required: true
+        default: 'testing'
+        type: choice
+        options:
+          - testing
+          - production
 
 jobs:
   android:
@@ -44,6 +52,7 @@ jobs:
 
       - name: Deploy to Play Store
         env:
+          DEPLOY_ENV: ${{ inputs.environment }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -70,8 +79,9 @@ jobs:
 
       - run: cd ios && pod install --repo-update
 
-      - name: Deploy to App Store
+      - name: Deploy to App Store / TestFlight
         env:
+          DEPLOY_ENV: ${{ inputs.environment }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
