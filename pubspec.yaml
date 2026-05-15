@@ -1,6 +1,6 @@
 name: Linklado
 description: Linklado em Flutter
-version: 1.1.0+3
+version: 11.0.0+4
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -35,5 +35,5 @@ msix_config:
   identity_name: 44341JulianoPortela.Linklado
   languages: pt-br
   logo_path: C:\Users\nerdp\Documents\FlutterProjects\tuklado_flutter\windows\runner\resources\app_icon.ico
-  certificate_path: C:\Windows\System32\CERTIFICATE2.pfx
-  certificate_password: numero0365
+  certificate_path: $(MSIX_CERTIFICATE_PATH)
+  certificate_password: $(MSIX_CERTIFICATE_PASSWORD)
