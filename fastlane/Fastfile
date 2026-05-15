@@ -45,14 +45,24 @@ platform :ios do
       team_id: "3W93D6R57D",
     )
 
-    update_code_signing_settings(
-      use_automatic_signing: false,
-      path: "ios/Runner.xcodeproj",
-      team_id: "3W93D6R57D",
-      targets: "Runner",
-      profile_name: "match AppStore com.linklado.linklado",
-      bundle_identifier: "com.linklado.linklado",
-    )
+    root = File.expand_path("..", __dir__)
+    xcodeproj = File.join(root, "ios/Runner.xcodeproj")
+
+    {
+      "Runner"   => ["com.linklado.linklado",          "match AppStore com.linklado.linklado"],
+      "Linklado" => ["com.linklado.linklado.Linklado", "match AppStore com.linklado.linklado.Linklado"],
+    }.each do |target, (bundle_id, profile)|
+      update_code_signing_settings(
+        use_automatic_signing: false,
+        path: xcodeproj,
+        team_id: "3W93D6R57D",
+        targets: target,
+        code_sign_identity: "iPhone Distribution",
+        profile_name: profile,
+        bundle_identifier: bundle_id,
+        build_configurations: ["Release"],
+      )
+    end
 
     build_app(
       workspace: "ios/Runner.xcworkspace",
