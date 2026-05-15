@@ -63,6 +63,7 @@ jobs:
     name: Deploy iOS
     if: ${{ inputs.platform == 'ios' || inputs.platform == 'both' }}
     runs-on: macos-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
@@ -79,6 +80,21 @@ jobs:
 
       - run: cd ios && pod install --repo-update
 
+      - name: Set up signing keychain
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
+        run: |
+          KEYCHAIN_NAME="build.keychain"
+          KEYCHAIN_PASSWORD="temporary"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_NAME"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
+          security list-keychains -d user -s "$KEYCHAIN_NAME" $(security list-keychains -d user | tr -d '"')
+          echo "MATCH_KEYCHAIN_NAME=$KEYCHAIN_NAME" >> $GITHUB_ENV
+          echo "MATCH_KEYCHAIN_PASSWORD=$KEYCHAIN_PASSWORD" >> $GITHUB_ENV
+
       - name: Deploy to App Store / TestFlight
         env:
           DEPLOY_ENV: ${{ inputs.environment }}
@@ -86,3 +102,7 @@ jobs:
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
         run: bundle exec fastlane ios deploy
+
+      - name: Clean up keychain
+        if: always()
+        run: security delete-keychain "build.keychain" 2>/dev/null || true

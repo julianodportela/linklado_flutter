@@ -43,6 +43,8 @@ platform :ios do
       git_url: "https://github.com/julianodportela/certificates",
       git_branch: "main",
       team_id: "3W93D6R57D",
+      keychain_name: ENV.fetch("MATCH_KEYCHAIN_NAME", "login"),
+      keychain_password: ENV.fetch("MATCH_KEYCHAIN_PASSWORD", ""),
     )
 
     root = File.expand_path("..", __dir__)
